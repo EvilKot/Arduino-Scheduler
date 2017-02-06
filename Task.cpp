@@ -3,7 +3,7 @@
 * @version 0.6
 *
 * @section License
-* RCore.Task is based heavily on Arduino-Scheduler 1.2 by Mikael Patel, Copyright (C) 2015-2017 (https://github.com/mikaelpatel/Arduino-Scheduler).
+* RCore-Task is based heavily on Arduino-Scheduler 1.2 by Mikael Patel, Copyright (C) 2015-2017 (https://github.com/mikaelpatel/Arduino-Scheduler).
 * Copyright (C) 2017, EvilKot
 *
 * This library is free software; you can redistribute it and/or
@@ -61,8 +61,7 @@ CoreTask* CoreTask::running = &CoreTask::main;
 
 size_t CoreTask::stackTop = CoreTask::DEFAULT_STACK_SIZE;
 
-void CoreTask::Setup()
-{
+void CoreTask::Setup() {
 	if (running != &main) return;
 
 	size_t stackSize = DEFAULT_STACK_SIZE + sizeof(this);
@@ -88,15 +87,15 @@ void CoreTask::Setup()
 	// Adjust stack top for next task allocation
 	stackTop += stackSize;
 
-	// Initiate task with given functions and stack top
+	// Initiate task with given function and stack top
 	this->stack = (curStack - stackSize);
 	this->Inject();
 }
 
-void CoreTask::Inject()
-{
+void CoreTask::Inject() {	
 	if (setjmp(this->context)) {
 		while (true) {
+			// Execute provided function then remove from the running queue.
 			this->Execute();
 
 			this->isCompleted = true;
@@ -107,13 +106,12 @@ void CoreTask::Inject()
 	}
 }
 
-void CoreTask::Execute()
-{
+void CoreTask::Execute() {
 	this->action();
 }
 
-void CoreTask::Start()
-{
+void CoreTask::Start() {
+	// Reset task and put back to the running queue.
 	this->isCompleted = false;
 
 	this->next = &CoreTask::main;
@@ -125,6 +123,7 @@ void CoreTask::Start()
 }
 
 void CoreTask::Start(Action action) {
+	// Swap executed function then restart the task.
 	this->action = action;
 	this->Start();
 }
@@ -133,8 +132,7 @@ bool CoreTask::IsCompleted() {
 	return this->isCompleted;
 }
 
-void CoreTask::Yield()
-{
+void CoreTask::Yield() {
 	if (setjmp(running->context)) return;
 
 	running = running->next;
@@ -142,7 +140,6 @@ void CoreTask::Yield()
 }
 
 extern "C"
-void yield(void)
-{
+void yield(void) {
 	CoreTask::Yield();
 }

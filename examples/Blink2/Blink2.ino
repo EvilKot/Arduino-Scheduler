@@ -27,22 +27,22 @@ void blink()
 	for (;;)
 	{
 		enable = !enable;
-		
-		enable ? ledTask->Start(ledOn) : ledTask->Start(ledOff);
-		await(ledTask);
 
-		Serial.println("Blinked!");
+		enable ? ledTask->Start(ledOn) : ledTask->Start(ledOff);
+		await(ledTask);		
 	}
 }
 
 void ledOn()
 {
+	Serial.println("Led on.");
 	digitalWrite(LED, HIGH);
 	delay(BLINK_INTERVAL);
 }
 
 void ledOff()
 {
-	digitalWrite(LED, LOW);
+	Serial.println("Led off.");
+	digitalWrite(LED, LOW);	
 	delay(BLINK_INTERVAL);
 }

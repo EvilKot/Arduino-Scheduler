@@ -30,12 +30,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-//typedef void(*Action)();
-
 class  CoreTask
 {
-private:
-	
+private:	
 #if defined(TEENSYDUINO) && (defined(__MK20DX256__) || defined(__MK64FX512__) || defined(__MK66FX1M0__))
 	/** Default stack size and stack max. */
 	static const size_t DEFAULT_STACK_SIZE = 512;
@@ -61,9 +58,8 @@ private:
 	static const size_t STACK_MAX = 32768;
 
 #else
-#error "Scheduler.h: board not supported"
+#error "Task.h: board not supported"
 #endif
-
 
 	static CoreTask main;
 	static CoreTask* running;
@@ -78,6 +74,8 @@ private:
 	virtual void Inject();
 
 protected:
+	
+	/* Add STL (std::function) for function args support? */
 	typedef void(*Action)();
 	Action action;
 
@@ -95,19 +93,20 @@ public:
 };
 
 template <typename TResult = void>
-class Task : public CoreTask //, CoreTaskUtils<TResult> ---> template<typename T> class CoreTaskUtils : public CoreTask { public: T Await() { while(!isCompleted) yeild(); return T; } };
+class Task : public CoreTask
 {
 protected:
+
 	typedef TResult(*Func)();
 	TResult result;
 
-	virtual void Execute() override
-	{
+	virtual void Execute() override {
+		// Cast function pointer back function pointer with TResult return type.
 		this->result = reinterpret_cast<typename Task<TResult>::Func>(this->action)();
 	}
 
 public:
-
+	
 	Task(Func func) : CoreTask(func) {
 		this->result = TResult();
 	}
@@ -130,13 +129,13 @@ public:
 			CoreTask::Yield();
 		return this->result;
 	}
-
 };
 
 template<>
 class Task<void> : public CoreTask
 {
 public:
+
 	Task(Action action) : CoreTask(action) { }
 
 	void Await() {
@@ -145,7 +144,8 @@ public:
 	}
 };
 
-#define await(task) task->Await();
+// Sugar.
+#define await(task) task->Await()
 #define waitfor(condition) while (!(condition)) yield()
 
 #endif
