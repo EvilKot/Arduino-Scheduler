@@ -10,18 +10,18 @@ May be unstable :)
 
 ###Basic usage:
 Define a gloabl variable:
-````
+````csharp
 Task<int>* task;
 ````
 In setup(), create a new task instance and assign the function with the same return type:
-````
+````csharp
 Task<int>* task = new Task<int>(someFunction);
 ````
 Start/Restart the task:
-````
+````csharp
 task->Start();
 ````
 Wait for completion and get result:
-````
+````csharp
 int result = await(task);
 ````
