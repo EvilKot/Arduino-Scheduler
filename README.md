@@ -13,7 +13,7 @@ Define a gloabl variable:
 ````
 Task<int>* task;
 ````
-In setup() create new task instance and assign the function with the same return type:
+In setup(), create a new task instance and assign the function with the same return type:
 ````
 Task<int>* task = new Task<int>(someFunction);
 ````
