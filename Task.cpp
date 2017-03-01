@@ -1,6 +1,6 @@
 /**
 * @file RCore.Task.cpp
-* @version 0.6
+* @version 0.7
 *
 * @section License
 * RCore-Task is based heavily on Arduino-Scheduler 1.2 by Mikael Patel, Copyright (C) 2015-2017 (https://github.com/mikaelpatel/Arduino-Scheduler).
@@ -48,8 +48,6 @@ extern size_t __malloc_margin;
 #define RAMEND 0x20008000
 #endif
 
-
-
 CoreTask::CoreTask(Action action) {
 	this->next = this->prev = this;
 	this->action = action;
@@ -62,8 +60,7 @@ CoreTask* CoreTask::running = &CoreTask::main;
 size_t CoreTask::stackTop = CoreTask::DEFAULT_STACK_SIZE;
 
 void CoreTask::Setup() {
-	if (running != &main) return;
-
+	//if (running != &main) return;
 	size_t stackSize = DEFAULT_STACK_SIZE + sizeof(this);
 
 	size_t frame = RAMEND - (size_t)&frame;
@@ -92,7 +89,7 @@ void CoreTask::Setup() {
 	this->Inject();
 }
 
-void CoreTask::Inject() {	
+void CoreTask::Inject() {
 	if (setjmp(this->context)) {
 		while (true) {
 			// Execute provided function then remove from the running queue.

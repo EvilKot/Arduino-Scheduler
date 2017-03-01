@@ -1,6 +1,6 @@
 /**
 * @file Task.h
-* @version 0.6
+* @version 0.7
 *
 * @section License
 * RCore-Task is based heavily on Arduino-Scheduler 1.2 by Mikael Patel, Copyright (C) 2015-2017 (https://github.com/mikaelpatel/Arduino-Scheduler).
@@ -32,7 +32,7 @@
 
 class  CoreTask
 {
-private:	
+private:
 #if defined(TEENSYDUINO) && (defined(__MK20DX256__) || defined(__MK64FX512__) || defined(__MK66FX1M0__))
 	/** Default stack size and stack max. */
 	static const size_t DEFAULT_STACK_SIZE = 512;
@@ -74,7 +74,7 @@ private:
 	virtual void Inject();
 
 protected:
-	
+
 	/* Add STL (std::function) for function args support? */
 	typedef void(*Action)();
 	Action action;
@@ -106,7 +106,7 @@ protected:
 	}
 
 public:
-	
+
 	Task(Func func) : CoreTask(func) {
 		this->result = TResult();
 	}
